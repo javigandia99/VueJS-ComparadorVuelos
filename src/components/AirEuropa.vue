@@ -1,107 +1,60 @@
-<template>
-  <div v-if="currentVuelo" class="edit-form">
-    <h4>AIR-EUROPA</h4>
-    <form>
-      <div class="form-group">
-        <label for="title">ID VUELO</label>
-        <input type="text" class="form-control" id="title" v-model="currentVuelo.idVuelo" />
-      </div>
-      <div class="form-group">
-        <label for="description">ORIGEN</label>
-        <input type="text" class="form-control" id="description" v-model="currentVuelo.origen" />
-      </div>
-       <div class="form-group">
-        <label for="description">DESTINO</label>
-        <input type="text" class="form-control" id="description" v-model="currentVuelo.destino" />
-      </div>
-    </form>
-<!--
-    <button
-      class="badge badge-primary mr-2"
-      v-if="currentVuelo.published"
-      @click="updatePublished(false)"
-    >UnPublish</button>
-    <button v-else class="badge badge-primary mr-2" @click="updatePublished(true)">Publish</button>
-
-    <button class="badge badge-danger mr-2" @click="deleteTutorial">Delete</button>
-
-    <button type="submit" class="badge badge-success" @click="updateTutorial">Update</button>
-    -->
-    <p>{{ message }}</p>
-  </div>
-
-  <div v-else>
-    <br />
-    <p>Please click on a VUELO AIR EUROPA...</p>
-  </div>
+<template src='./AirEuropa.html' lang='html'>
 </template>
 
 <script>
 import DataService from "../services/DataService";
 
 export default {
-  name: "aireuropa",
+  name: "AirEuropa",
   data() {
     return {
+      vuelos: [],
       currentVuelo: null,
-      message: ""
+      currentIndex: -1,
+      destino: ""
     };
   },
   methods: {
-    getVuelos(destino) {
-      DataService.get(destino)
+    getALL() {
+      DataService.getAll()
         .then(response => {
-          this.currentVuelo = response.data;
-          console.log(response.data);
+          this.vuelos = response.data;
         })
-        .catch(e => {
-          console.log(e);
-        });
+        // .catch(e => {
+        //   print(e);
+        // });
     },
-/*
-    updatePlazas(plazas) {
-      var data = {
-        idVuelo: this.currentVuelo.idVuelo,
-        origen: this.currentVuelo.origen,
-        destino: this.currentVuelo.destino,
-        fecha: this.currentVuelo.fecha,
-        hora: this.currentVuelo.hora,
-        precio: this.currentVuelo.precio,
-        plazas: this.currentVuelo.plazas
-      };
-
-      DataService.update(this.currentVuelo.id, data)
-        .then(response => {
-         // this.currentVuelo.published = status;
-          console.log(response.data);
-        })
-        .catch(e => {
-          console.log(e);
-        });
+    refreshList() {
+      this.getALL();
+      this.currentVuelo = null;
+      this.currentIndex = -1;
     },
 
-    update() {
-      DataService.update(this.currentVuelo.idVuelo, this.currentVuelo)
+    setActiveVuelo(vuelo, index) {
+      this.currentVuelo = vuelo;
+      this.currentIndex = index;
+    },
+    searchDestino() {
+      DataService.findByDestino(this.destino)
         .then(response => {
-          console.log(response.data);
-          this.message = "The vuelo was updated successfully!";
+          this.vuelos = response.data;
+        //  print(response.data);
         })
-        .catch(e => {
-          console.log(e);
-        });
-    }*/
+        // .catch(e => {
+        //   print(e);
+        // });
+    }
   },
-  
   mounted() {
-    this.message = "";
-    this.getVuelos(this.$route.params.id);
+    this.getALL();
   }
 };
 </script>
 
 <style>
-.edit-form {
-  max-width: 300px;
+.list {
+  text-align: left;
+  max-width: 750px;
   margin: auto;
 }
 </style>

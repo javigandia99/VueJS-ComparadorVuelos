@@ -1,61 +1,58 @@
-<template src='./Iberia.html' lang='html'>
+<template src='./detailAirEuropa.html' lang='html'>
 </template>
 
 <script>
 import DataService from "../services/DataService";
 
 export default {
-  name: "iberia",
+  name: "detailAirEuropa",
   data() {
     return {
-      currentTutorial: null,
-      message: ''
+      currentVuelo: null,
+      message: ""
     };
   },
   methods: {
     getVuelo(id) {
       DataService.get(id)
         .then(response => {
-          this.currentTutorial = response.data;
+          this.currentVuelo = response.data;
           print(response.data);
         })
         .catch(e => {
-           print(e);
+          print(e);
         });
     },
 
     updatePublished(status) {
       var data = {
-        id: this.currentTutorial.id,
-        title: this.currentTutorial.title,
-        description: this.currentTutorial.description,
-        published: status
+        plazas: this.currentVuelo.plazas
       };
 
-      DataService.update(this.currentTutorial.id, data)
+      DataService.update(this.currentVuelo.id, data)
         .then(response => {
           this.currentTutorial.published = status;
-           print(response.data);
+          print(response.data);
         })
         .catch(e => {
-           print(e);
+          print(e);
         });
     },
 
-    updateTutorial() {
-      DataService.update(this.currentTutorial.id, this.currentTutorial)
+    updateVuelo() {
+      DataService.update(this.currentVuelo.id, this.currentVuelo)
         .then(response => {
           print(response.data);
-          this.message = 'The iberia vuelo was updated successfully!';
+          this.message = "El vuelo ha sido reservado, -1 plaza";
         })
         .catch(e => {
-         print(e);
+          print(e);
         });
     }
   },
   mounted() {
-    this.message = '';
-    this.getTutorial(this.$route.params.id);
+    this.message = "";
+    this.getVuelo(this.$route.params.id);
   }
 };
 </script>

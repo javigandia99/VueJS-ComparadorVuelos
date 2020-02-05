@@ -2,19 +2,21 @@ import http from "../http-common";
 
 class DataService {
   getAll() {
-    return http.get("/vuelos/fecha/origen/");
+    return http.get("aireuropa/vuelos/fecha/origen/");
   }
 
-  get(destino) {
-    return http.get(`/vuelos/fecha/origen/:${destino}`);
-  }
-/*
-  update(id, data) {
-    return http.put(`/vuelos/fecha/origen/:${destino}`, data);
+  get(id) {
+    return http.get(`aireuropa/vuelos/fecha/origen/:${id}`);
   }
 
-  findByTitle(title) {
-    return http.get(`/tutorials?title=${title}`);
-  }
+  /*
+    update(id, data) {
+      return http.put(`/vuelos/fecha/origen/:${destino}`, data);
+    }
   */
+  findByDestino(destino) {
+    return http.get(`aireuropa/vuelos/fecha/origen/:${destino}`);
+  }
+
 }
+export default new DataService();
