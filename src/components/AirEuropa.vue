@@ -16,33 +16,34 @@ export default {
   },
   methods: {
     getALL() {
-      DataService.getAll()
-        .then(response => {
-          this.vuelos = response.data;
-        })
-        // .catch(e => {
-        //   print(e);
-        // });
+      DataService.getAllAirEuropa().then(response => {
+        this.vuelos = response.data;
+      });
+      // .catch(e => {
+      //   print(e);
+      // });
     },
     refreshList() {
       this.getALL();
       this.currentVuelo = null;
       this.currentIndex = -1;
     },
-
     setActiveVuelo(vuelo, index) {
       this.currentVuelo = vuelo;
       this.currentIndex = index;
     },
     searchDestino() {
-      DataService.findByDestino(this.destino)
-        .then(response => {
-          this.vuelos = response.data;
-        //  print(response.data);
-        })
-        // .catch(e => {
-        //   print(e);
-        // });
+      DataService.findByDestinoAirEuropa(this.destino).then(response => {
+        this.vuelos = response.data;
+      });
+      // .catch(e => {
+      //   print(e);
+      // });
+    },
+    BookingVuelo() {
+      DataService.updateAirEuropa().then(response => {
+        response.data;
+      });
     }
   },
   mounted() {
@@ -50,11 +51,24 @@ export default {
   }
 };
 </script>
-
 <style>
 .list {
   text-align: left;
-  max-width: 750px;
   margin: auto;
+}
+#titulo {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+#card {
+  background-color: rgb(52, 58, 64);
+  border-radius: 3em;
+}
+#vuelo {
+  background-color: white;
+  border-radius: 3em;
+}
+#notvuelo {
+  color: white;
 }
 </style>

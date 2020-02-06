@@ -8,57 +8,52 @@ export default {
   name: "iberia",
   data() {
     return {
-      currentTutorial: null,
-      message: ''
+      currentVuelo: null,
+      message: ""
     };
   },
   methods: {
-    getVuelo(id) {
-      DataService.get(id)
-        .then(response => {
-          this.currentTutorial = response.data;
-          print(response.data);
-        })
-        .catch(e => {
-           print(e);
-        });
+    getALL() {
+      DataService.getAllIberia().then(response => {
+        this.vuelos = response.data;
+      });
+      // .catch(e => {
+      //   print(e);
+      // });
+    },
+    refreshList() {
+      this.getALL();
+      this.currentVuelo = null;
+      this.currentIndex = -1;
     },
 
-    updatePublished(status) {
-      var data = {
-        id: this.currentTutorial.id,
-        title: this.currentTutorial.title,
-        description: this.currentTutorial.description,
-        published: status
-      };
-
-      DataService.update(this.currentTutorial.id, data)
-        .then(response => {
-          this.currentTutorial.published = status;
-           print(response.data);
-        })
-        .catch(e => {
-           print(e);
-        });
+    setActiveVuelo(vuelo, index) {
+      this.currentVuelo = vuelo;
+      this.currentIndex = index;
     },
-
-    updateTutorial() {
-      DataService.update(this.currentTutorial.id, this.currentTutorial)
-        .then(response => {
-          print(response.data);
-          this.message = 'The iberia vuelo was updated successfully!';
-        })
-        .catch(e => {
-         print(e);
-        });
+    searchDestino() {
+      DataService.findByDestino(this.destino).then(response => {
+        this.vuelos = response.data;
+        //  print(response.data);
+      });
+      // .catch(e => {
+      //   print(e);
+      // });
     }
   },
   mounted() {
-    this.message = '';
-    this.getTutorial(this.$route.params.id);
+    this.getALL();
   }
 };
 </script>
+
+<style>
+.list {
+  text-align: left;
+  max-width: 750px;
+  margin: auto;
+}
+</style>
 
 <style>
 .edit-form {
