@@ -1,33 +1,42 @@
 <template>
-<div class="container mt-4">
-  <div class="list row">
-    <div class="col-md-12">
-      <h1>Iberia no implementado todavia.</h1>
+  <div class="container mt-4">
+    <div class="list row">
+      <div class="col-12 col-md-12 mb-4">
+        <img class="img_logo" src="../assets/iberia.png" />
+      </div>
+
+<!--TOODO:Implement Iberia view  -->
+
+      <div class="col-12 mt-5">
+        <h3>Ahora mismo no hay vuelos disponibles. Disculpen las molestias</h3>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
 import DataService from "../services/DataService";
 
 export default {
-  name: "iberia",
+  name: "AirEuropa",
   data() {
     return {
+      vuelos: [],
       currentVuelo: null,
-      message: ""
+      currentIndex: -1
     };
   },
   methods: {
     getALL() {
-      DataService.getAllIberia().then(response => {
-        this.vuelos = response.data;
-      });
-      // .catch(e => {
-      //   print(e);
-      // });
+      DataService.getAllIberia()
+        .then(response => {
+          this.vuelos = response.data;
+        })
+        .catch(e => {
+          e.response;
+        });
     },
+
     refreshList() {
       this.getALL();
       this.currentVuelo = null;
@@ -38,14 +47,22 @@ export default {
       this.currentVuelo = vuelo;
       this.currentIndex = index;
     },
-    searchDestino() {
-      DataService.findByDestino(this.destino).then(response => {
+
+    getOrigenItem(origenSelected) {
+      DataService.findByOrigenIberia(origenSelected).then(response => {
         this.vuelos = response.data;
-        //  print(response.data);
       });
-      // .catch(e => {
-      //   print(e);
-      // });
+    },
+
+    getDestinoItem(origenSelected) {
+      DataService.findByDestinoIberia(origenSelected).then(response => {
+        this.vuelos = response.data;
+      });
+    },
+
+    bookingVuelo() {
+      DataService.updateIberia();
+      this.refreshList();
     }
   },
   mounted() {
@@ -53,18 +70,45 @@ export default {
   }
 };
 </script>
-
 <style>
 .list {
-  text-align: left;
-  max-width: 750px;
+  text-align: center;
   margin: auto;
+  background-color: white;
 }
-</style>
-
-<style>
-.edit-form {
-  max-width: 300px;
+.img_logo {
+  width: 40em;
   margin: auto;
+  text-align: center;
+}
+.card {
+  max-width: 40em;
+}
+.card_title {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  margin-top: 1em;
+  height: 3em;
+  font-size: 1.5em;
+}
+
+.card_image {
+  width: 20em;
+  height: 11em;
+}
+.card_precio {
+  font-size: 2.5em;
+  text-align: right;
+}
+#vuelo {
+  background-color: white;
+  border-radius: 3em;
+}
+#notvuelo {
+  color: white;
+}
+#card {
+  background-color: rgb(52, 58, 64);
+  border-radius: 3em;
 }
 </style>

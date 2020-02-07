@@ -9,7 +9,7 @@ export default {
 </script>
 <style>
 .index_img{
-  height: 56.1em;
-  width: 120em;
+  height: 54.5em;
+  width: 116.3em;
 }
 </style>
