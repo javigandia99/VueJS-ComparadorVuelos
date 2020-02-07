@@ -5,6 +5,7 @@
         <img class="img_logo" src="../assets/air-europa.png" />
       </div>
       <!--TODO: Implemented Vera search to Origen and Destino -->
+      <!--
       <div class="col-12 col-md-6 offset-1">
         <div class="input-group mb-3">
           <input
@@ -19,6 +20,37 @@
           </div>
         </div>
       </div>
+       -->
+       <!--Origen Selector to search-->
+<template> 
+  <div>
+    <b-form-select v-model="selected" class="mb-3">
+      <b-form-select-option :value="null" disabled>Selecciona un Origen:</b-form-select-option>
+      <b-form-select-option 
+        v-for="(vuelo, index) in vuelos"
+          :key="index"
+          @change="getOrigenItem"
+      >{{vuelo.Origen}}
+      </b-form-select-option>
+    </b-form-select>
+  </div>
+</template>
+      <!--Destino Selector to search -->
+      <!--TODO: Search with both of them not implemented -->
+<template> 
+  <div>
+    <b-form-select v-model="selected" class="mb-3">
+      <b-form-select-option :value="null" disabled>Selecciona un Destino:</b-form-select-option>
+      <b-form-select-option 
+        v-for="(vuelo, index) in vuelos"
+          :key="index"
+          @change="getDestinoItem"
+      >{{vuelo.Destino}}
+      </b-form-select-option>
+    </b-form-select>
+  </div>
+</template>
+
       <!--TODO: Implemented Vera search to Origen and Destino -->
 
       <b-card-group deck>
@@ -141,7 +173,10 @@ export default {
       vuelos: [],
       currentVuelo: null,
       currentIndex: -1,
-      Destino: ""
+      Destino: "",
+
+      selected: null
+        
     };
   },
   methods: {
@@ -149,10 +184,10 @@ export default {
       DataService.getAllAirEuropa()
         .then(response => {
           this.vuelos = response.data;
-        })
-        .catch(e => {
-          print(e);
         });
+        //.catch(e => {
+          // print(e);
+        //});
     },
     refreshList() {
       this.getALL();
@@ -171,11 +206,23 @@ export default {
       //   print(e);
       // });
     },
+    getOrigenItem(origenSelected){
+        DataService.getDestinoAirEuropa(origenSelected).then(response => {
+        this.vuelos = response.data;
+      });
+      },
+    getDestinoItem(origenSelected){
+        DataService.findByDestinoAirEuropa(origenSelected).then(response => {
+        this.vuelos = response.data;
+      });
+      },
+    /*
     bookingVuelo() {
       DataService.updateAirEuropa().then(response => {
-        print(response.data);
+        //print(response.data);
       });
     }
+    */
   },
   mounted() {
     this.getALL();

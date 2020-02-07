@@ -5,6 +5,10 @@ class DataService {
     return http.get("aireuropa/vuelos/fecha/origen/");
   }
 
+  getDestinoAirEuropa(origen) {
+    return http.get(`aireuropa/vuelos/fecha/:${origen}/destino/`);
+  }
+
   getAllIberia() {
     return http.get("iberia/vuelos/fecha/origen/");
   }
