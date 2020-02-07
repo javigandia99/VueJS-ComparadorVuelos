@@ -13,11 +13,19 @@ export default new Router({
       name: "AirEuropa",
       component: () => import("../components/AirEuropa")
     },
+    //IBERIA
     {
       path: "iberia/vuelos/fecha/origen/",
       alias: "/iberia",
-      name: "detailAirEuropa",
+      name: "Iberia",
       component: () => import("../components/Iberia")
+    },
+    //INDEX
+    {
+      path: "/",
+      alias: "/",
+      name: "Index",
+      component: () => import("../components/Index")
     }
   ]
 });

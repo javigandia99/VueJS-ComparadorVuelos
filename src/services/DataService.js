@@ -17,12 +17,12 @@ class DataService {
     return http.get(`iberia/vuelos/fecha/origen/:${destino}`);
   }
 
-  updateAirEuropa(destino, data) {
-    return http.put(`aireuropa/vuelos/fecha/origen/:${destino}`, data);
+  updateAirEuropa(IdVuelo, data) {
+    return http.put(`aireuropa/vuelos/${IdVuelo}`, data);
   }
 
-  updateIberia(destino, data) {
-    return http.put(`iberia/vuelos/fecha/origen/:${destino}`, data);
+  updateIberia(IdVuelo, data) {
+    return http.put(`iberia/vuelos/${IdVuelo}`, data);
   }
 
   findByDestinoAirEuropa(destino) {
