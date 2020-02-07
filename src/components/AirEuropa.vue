@@ -1,8 +1,8 @@
 <template>
   <div class="container mt-4">
     <div class="list row">
-      <div class="col-12 col-md-5 mb-4">
-        <h1 id="titulo">AIR EUROPA</h1>
+      <div class="col-12 col-md-12 mb-4">
+        <img class="img_logo" src="../assets/air-europa.png" />
       </div>
       <!--TODO: Implemented Vera search to Origen and Destino -->
       <div class="col-12 col-md-6 offset-1">
@@ -27,17 +27,24 @@
           :key="index"
           img-top
           tag="article"
-          style="max-width: 50rem;"
+          style="max-width: 60rem;"
         >
           <b-card-img
             v-bind:src="vuelo.Image"
             v-bind:alt="vuelo.IdVuelo"
             class="rounded-0 card_image"
           ></b-card-img>
-          <b-card-title>{{vuelo.Origen + " a " +vuelo.Destino}}</b-card-title>
-          <b-card-text>{{vuelo.Fecha}}</b-card-text>
+          <b-card-title
+            class="card_title"
+            style="height:3em;"
+          >{{vuelo.Origen + " a " +vuelo.Destino}}</b-card-title>
+          <b-card-text style="height:1em;">{{vuelo.Hora}}</b-card-text>
+          <b-card-text style="height:1em;">{{vuelo.Fecha}}</b-card-text>
           <b-card-text class="card_precio">{{vuelo.Precio +" €"}}</b-card-text>
+
           <b-button
+            block
+            variant="primary"
             v-b-modal.modal-center
             :class="{ active: index == currentIndex }"
             @click="setActiveVuelo(vuelo, index)"
@@ -52,8 +59,24 @@
         centered
         :title="currentVuelo.Origen +' - '+currentVuelo.Destino"
       >
-        <div class="p-4" id="vuelo">
+        <!--
           <div class="col-6">
+            <img v-bind:src="currentVuelo.image" fluid alt="Imagen de vuelo" />
+          </div>
+          <b-button
+            class="btn btn-outline-warning btn-block"
+            type="button"
+            @click="bookingVuelo"
+          >Ir a reservar plaza de vuelo</b-button>
+        -->
+        <template v-slot:modal-header="{ close }">
+          <!-- Emulate built in modal header close button action -->
+          <b-button size="sm" variant="outline-danger" @click="close()">Cancelar Reserva</b-button>
+          <h4>{{currentVuelo.Origen +' - '+currentVuelo.Destino}}</h4>
+        </template>
+
+        <template v-slot:default>
+          <div class="p-4" id="vuelo">
             <div>
               <label>
                 <strong>idVuelo:</strong>
@@ -97,16 +120,12 @@
               {{ currentVuelo.plazas }}
             </div>
           </div>
-          <div class="col-6">
-            <img v-bind:src="currentVuelo.image" fluid alt="Imagen de vuelo" />
-          </div>
-          <b-button
-            class="btn btn-outline-warning btn-block"
-            type="button"
-            @click="bookingVuelo"
-          >Ir a reservar plaza de vuelo</b-button>
-          
-        </div>
+        </template>
+
+        <template v-slot:modal-footer="{ok}">
+          <!-- Emulate built in modal footer ok and cancel button actions -->
+          <b-button size="sm" variant="success" @click="ok()">Reservar vuelo</b-button>
+        </template>
       </b-modal>
     </div>
   </div>
@@ -164,11 +183,17 @@ export default {
 };
 </script>
 <style>
-.list {
-  text-align: left;
+.img_logo {
+  width: 60em;
   margin: auto;
+  text-align: center;
 }
-#titulo {
+.list {
+  text-align: center;
+  margin: auto;
+  background-color: white;
+}
+.card_title {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
