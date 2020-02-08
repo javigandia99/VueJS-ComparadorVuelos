@@ -5,9 +5,18 @@
         <img class="img_logo" src="../assets/iberia.png" />
       </div>
 
+      <div class="search-wrapper mb-2 col-12">
+        <input
+          class="form-control"
+          type="text"
+          v-model="searchQuery"
+          placeholder="Buscar vuelos por origen"
+        />
+      </div>
+
       <b-card-group columns>
         <b-card
-          v-for="(vuelo, index) in vuelos"
+          v-for="(vuelo, index) in FilteredVuelos"
           :key="index"
           tag="article"
           class="card"
@@ -41,6 +50,7 @@
       <b-modal
         v-if="currentVuelo"
         id="modal-center"
+        class="modal-backdrop"
         centered
         no-stacking
         :title="currentVuelo.Origen +' - '+currentVuelo.Destino"
@@ -109,9 +119,13 @@
         </template>
       </b-modal>
 
-      <b-modal id="modal-successful" centered size="sm" title="¡Enhorabuena!" ok-only>
+      <b-modal id="modal-successful" centered size="sm" title="¡Enhorabuena!" >
         <p class="text text-center">Ha contratado un vuelo con</p>
         <img src="../assets/iberia.png" class="img_logo_modal" />
+         <template v-slot:modal-footer="{ok}">
+          <b-button size="sm" variant="outline-success" @click="ok()">Ok</b-button>
+        </template>
+        
       </b-modal>
     </div>
     <!-- Footer -->
@@ -135,7 +149,8 @@ export default {
     return {
       vuelos: [],
       currentVuelo: null,
-      currentIndex: -1
+      currentIndex: -1,
+      searchQuery: null
     };
   },
   methods: {
@@ -185,6 +200,17 @@ export default {
   },
   mounted() {
     this.getALL();
+  },
+  computed: {
+    FilteredVuelos() {
+      if (this.searchQuery) {
+        return this.vuelos.filter(vuelo => {
+          vuelo.origen.startsWith(this.searchQuery);
+        });
+      } else {
+        return this.vuelos;
+      }
+    }
   }
 };
 </script>
@@ -223,5 +249,8 @@ export default {
   width: 16.5em;
   height: 6em;
   text-align: center;
+}
+.modal-backdrop {
+  opacity: 0.7;
 }
 </style>

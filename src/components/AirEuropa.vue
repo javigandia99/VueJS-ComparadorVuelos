@@ -87,6 +87,7 @@
       <b-modal
         v-if="currentVuelo"
         id="modal-center"
+        class="modal-backdrop"
         centered
         no-stacking
         :title="currentVuelo.Origen +' - '+currentVuelo.Destino"
@@ -221,7 +222,7 @@ export default {
     //Update to flight booking
     bookingVuelo(idVuelo) {
       DataService.updateAirEuropa(idVuelo);
-      this.close();
+      //this.close();
     },
 
     //Format date
@@ -269,5 +270,8 @@ export default {
   width: 16.5em;
   height: 5em;
   text-align: center;
+}
+.modal-backdrop {
+  opacity: 0.7;
 }
 </style>
