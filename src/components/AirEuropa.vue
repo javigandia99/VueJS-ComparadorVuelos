@@ -75,9 +75,11 @@
             block
             variant="primary"
             v-b-modal.modal-center
+            v-if="vuelo.disponibles > 0"
             :class="{ active: index == currentIndex }"
             @click="setActiveVuelo(vuelo, index)"
           >Ver Detalles</b-button>
+          <b-button v-else block disabled variant="secondary">PLAZAS AGOTADAS</b-button>
         </b-card>
       </b-card-group>
 
@@ -89,12 +91,9 @@
         no-stacking
         :title="currentVuelo.Origen +' - '+currentVuelo.Destino"
       >
-        <template v-slot:modal-header="{ close }">
-          <!-- Emulate built in modal header close button action -->
-          <b-button size="sm" variant="outline-danger" @click="close()">Cancelar Reserva</b-button>
+        <template v-slot:modal-header>
           <h3>{{currentVuelo.origen +' - '+currentVuelo.destino}}</h3>
         </template>
-
         <template v-slot:default>
           <div class="p-4" id="vuelo">
             <div>
@@ -141,9 +140,8 @@
             </div>
           </div>
         </template>
-
-        <template v-slot:modal-footer>
-          <!-- Emulate built in modal footer ok button actions -->
+        <template v-slot:modal-footer="{ close }">
+          <b-button size="sm" variant="outline-danger" @click="close()">Cancelar Reserva</b-button>
           <b-button
             size="sm"
             variant="success"
@@ -152,14 +150,15 @@
           >Reservar vuelo</b-button>
         </template>
       </b-modal>
+
       <b-modal id="modal-successful" centered size="sm" title="¡Enhorabuena!" ok-only>
-        <p class="text text-center"> Ha contratado un vuelo con</p>
-        <img src="../assets/air-europa.png" class="img_logo_modal"/>
+        <p class="text text-center">Ha contratado un vuelo con</p>
+        <img src="../assets/air-europa.png" class="img_logo_modal" />
       </b-modal>
     </div>
     <!-- Footer -->
-    <footer class="page-footer font-small blue">
-      <div class="footer-copyright text-center py-3">
+    <footer class="footer page-footer font-small mt-1">
+      <div class="footer footer-copyright text-center py-3">
         © 2020 Copyright:
         <a href="./">ComparadorVuelos</a>
       </div>
@@ -222,11 +221,11 @@ export default {
     //Update to flight booking
     bookingVuelo(idVuelo) {
       DataService.updateAirEuropa(idVuelo);
-      this.close()
+      this.close();
     },
 
     //Format date
-    formatDate(date,type) {
+    formatDate(date, type) {
       return moment(date).format(type);
     }
   },
@@ -266,7 +265,7 @@ export default {
   font-size: 2.5em;
   text-align: right;
 }
-.img_logo_modal{
+.img_logo_modal {
   width: 16.5em;
   height: 5em;
   text-align: center;

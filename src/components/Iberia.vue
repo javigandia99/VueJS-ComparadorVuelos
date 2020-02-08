@@ -5,17 +5,129 @@
         <img class="img_logo" src="../assets/iberia.png" />
       </div>
 
-<!--TOODO:Implement Iberia view  -->
+      <b-card-group columns>
+        <b-card
+          v-for="(vuelo, index) in vuelos"
+          :key="index"
+          tag="article"
+          class="card"
+          :elevation="10"
+        >
+          <b-card-img v-bind:src="vuelo.image" v-bind:alt="vuelo.idVuelo" class="card_image"></b-card-img>
+          <b-card-title class="card_title">{{vuelo.origen + " - " +vuelo.destino}}</b-card-title>
+          <b-list-group horizontal>
+            <b-list-group-item>{{"Fecha: "+formatDate(vuelo.fecha)}}</b-list-group-item>
+            <b-list-group-item>{{"Salida: "+vuelo.hora}}</b-list-group-item>
+            <b-list-group-item>
+              Plazas:
+              <strong id="plazas">{{vuelo.disponibles+"/"+vuelo.totales}}</strong>
+            </b-list-group-item>
+          </b-list-group>
+          <b-card-text class="card_precio">{{vuelo.precio +" €"}}</b-card-text>
 
-      <div class="col-12 mt-5">
-        <h3>Ahora mismo no hay vuelos disponibles. Disculpen las molestias</h3>
-      </div>
+          <b-button
+            block
+            variant="danger"
+            v-b-modal.modal-center
+            v-if="vuelo.disponibles > 0"
+            :class="{ active: index == currentIndex }"
+            @click="setActiveVuelo(vuelo, index)"
+          >Ver Detalles</b-button>
+          <b-button v-else block disabled variant="warning">PLAZAS AGOTADAS</b-button>
+        </b-card>
+      </b-card-group>
+
+      <!-- Detail Vuelos when selected one  -->
+      <b-modal
+        v-if="currentVuelo"
+        id="modal-center"
+        centered
+        no-stacking
+        :title="currentVuelo.Origen +' - '+currentVuelo.Destino"
+      >
+        <template v-slot:modal-header>
+          <!-- Emulate built in modal header close button action -->
+
+          <h3>{{currentVuelo.origen +' - '+currentVuelo.destino}}</h3>
+        </template>
+        <template v-slot:default>
+          <div class="p-4" id="vuelo">
+            <div>
+              <label>
+                <strong>idVuelo:</strong>
+              </label>
+              {{ currentVuelo.idVuelo }}
+            </div>
+            <div>
+              <label>
+                <strong>Origen:</strong>
+              </label>
+              {{ currentVuelo.origen }}
+            </div>
+            <div>
+              <label>
+                <strong>Destino:</strong>
+              </label>
+              {{ currentVuelo.destino }}
+            </div>
+            <div>
+              <label>
+                <strong>Precio:</strong>
+              </label>
+              {{ currentVuelo.precio+" €" }}
+            </div>
+            <div>
+              <label>
+                <strong>Fecha:</strong>
+              </label>
+              {{ formatDate(currentVuelo.fecha,"LL") }}
+            </div>
+            <div>
+              <label>
+                <strong>Hora:</strong>
+              </label>
+              {{ currentVuelo.hora }}
+            </div>
+            <div>
+              <label>
+                <strong>Plazas Disponibles:</strong>
+              </label>
+              {{ currentVuelo.disponibles+"/"+currentVuelo.totales }}
+            </div>
+          </div>
+        </template>
+
+        <template v-slot:modal-footer="{close}">
+          <!-- Emulate built in modal footer ok button actions -->
+          <b-button size="sm" variant="outline-danger" @click="close()">Cancelar Reserva</b-button>
+          <b-button
+            size="sm"
+            variant="success"
+            @click="bookingVuelo(currentVuelo.idVuelo,currentVuelo)"
+            v-b-modal="'modal-successful'"
+          >Reservar vuelo</b-button>
+        </template>
+      </b-modal>
+
+      <b-modal id="modal-successful" centered size="sm" title="¡Enhorabuena!" ok-only>
+        <p class="text text-center">Ha contratado un vuelo con</p>
+        <img src="../assets/iberia.png" class="img_logo_modal" />
+      </b-modal>
     </div>
+    <!-- Footer -->
+    <footer class="page-footer font-small blue">
+      <div class="footer-copyright text-center py-3">
+        © 2020 Copyright:
+        <a href="./">ComparadorVuelos</a>
+      </div>
+      <!-- Footer -->
+    </footer>
   </div>
 </template>
 
 <script>
 import DataService from "../services/DataService";
+import moment from "moment";
 
 export default {
   name: "AirEuropa",
@@ -27,42 +139,48 @@ export default {
     };
   },
   methods: {
+    //Get all data
     getALL() {
-      DataService.getAllIberia()
-        .then(response => {
-          this.vuelos = response.data;
-        })
-        .catch(e => {
-          e.response;
-        });
+      DataService.getAllIberia().then(response => {
+        this.vuelos = response.data;
+      });
     },
 
+    //Refresh data
     refreshList() {
       this.getALL();
       this.currentVuelo = null;
       this.currentIndex = -1;
     },
 
+    //Take current vuelo
     setActiveVuelo(vuelo, index) {
       this.currentVuelo = vuelo;
       this.currentIndex = index;
     },
 
+    //Filter by origen
     getOrigenItem(origenSelected) {
-      DataService.findByOrigenIberia(origenSelected).then(response => {
+      DataService.filterByOrigenIberia(origenSelected).then(response => {
         this.vuelos = response.data;
       });
     },
 
-    getDestinoItem(origenSelected) {
-      DataService.findByDestinoIberia(origenSelected).then(response => {
+    //Filter by destino
+    getDestinoItem(destinoSelected) {
+      DataService.filterByDestinoIberia(destinoSelected).then(response => {
         this.vuelos = response.data;
       });
     },
 
-    bookingVuelo() {
-      DataService.updateIberia();
-      this.refreshList();
+    //Update to flight booking
+    bookingVuelo(idVuelo) {
+      DataService.updateIberia(idVuelo);
+    },
+
+    //Format date
+    formatDate(date) {
+      return moment(date).format("ll");
     }
   },
   mounted() {
@@ -70,6 +188,7 @@ export default {
   }
 };
 </script>
+
 <style>
 .list {
   text-align: center;
@@ -100,15 +219,9 @@ export default {
   font-size: 2.5em;
   text-align: right;
 }
-#vuelo {
-  background-color: white;
-  border-radius: 3em;
-}
-#notvuelo {
-  color: white;
-}
-#card {
-  background-color: rgb(52, 58, 64);
-  border-radius: 3em;
+.img_logo_modal {
+  width: 16.5em;
+  height: 6em;
+  text-align: center;
 }
 </style>
