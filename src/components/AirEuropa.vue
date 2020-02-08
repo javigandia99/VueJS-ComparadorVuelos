@@ -21,7 +21,7 @@
         </div>
       </div>
       -->
-      <!--Origen Selector to search-->
+      <!--Origen Selector to search
 
       <div class="col-6">
         <b-form-select v-model="selected" class="mb-3">
@@ -35,7 +35,7 @@
         </b-form-select>
       </div>
 
-      <!--Destino Selector to search -->
+      Destino Selector to search -->
       <!--TODO: Search with both of them not implemented 
 
       <div class="col-6">
@@ -51,9 +51,19 @@
 
       TODO: Implemented Vera search to Origen and Destino-->
 
+      <!-- Search by Origen -->
+      <div class="search-wrapper mb-2 col-12">
+        <input
+          class="form-control"
+          type="text"
+          v-model="searchQuery"
+          placeholder="Buscar vuelos por origen"
+        />
+      </div>
+
       <b-card-group columns v-if="vuelos">
         <b-card
-          v-for="(vuelo, index) in vuelos"
+          v-for="(vuelo, index) in FilteredVuelos"
           :key="index"
           tag="article"
           class="card"
@@ -179,7 +189,7 @@ export default {
       vuelos: [],
       currentVuelo: null,
       currentIndex: -1,
-      Destino: "",
+      searchQuery: '',
 
       selected: null
     };
@@ -232,6 +242,17 @@ export default {
   },
   mounted() {
     this.getALL();
+  },
+  computed: {
+    FilteredVuelos() {
+      var self = this;
+      if (this.searchQuery == "") {
+        return this.vuelos;
+      }
+      return this.vuelos.filter(function(vuelo) {
+        return vuelo.origen.toLowerCase().indexOf(self.searchQuery) >= 0;
+      });
+    }
   }
 };
 </script>

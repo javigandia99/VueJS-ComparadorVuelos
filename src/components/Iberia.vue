@@ -119,13 +119,13 @@
         </template>
       </b-modal>
 
-      <b-modal id="modal-successful" centered size="sm" title="¡Enhorabuena!" >
+      <!-- Modal when successful booking flight -->
+      <b-modal id="modal-successful" centered size="sm" title="¡Enhorabuena!">
         <p class="text text-center">Ha contratado un vuelo con</p>
         <img src="../assets/iberia.png" class="img_logo_modal" />
-         <template v-slot:modal-footer="{ok}">
+        <template v-slot:modal-footer="{ok}">
           <b-button size="sm" variant="outline-success" @click="ok()">Ok</b-button>
         </template>
-        
       </b-modal>
     </div>
     <!-- Footer -->
@@ -150,7 +150,7 @@ export default {
       vuelos: [],
       currentVuelo: null,
       currentIndex: -1,
-      searchQuery: null
+      searchQuery: ""
     };
   },
   methods: {
@@ -203,13 +203,13 @@ export default {
   },
   computed: {
     FilteredVuelos() {
-      if (this.searchQuery) {
-        return this.vuelos.filter(vuelo => {
-          vuelo.origen.startsWith(this.searchQuery);
-        });
-      } else {
+      var self = this;
+      if (this.searchQuery == "") {
         return this.vuelos;
       }
+      return this.vuelos.filter(function(vuelo) {
+        return vuelo.origen.toLowerCase().indexOf(self.searchQuery) >= 0;
+      });
     }
   }
 };
