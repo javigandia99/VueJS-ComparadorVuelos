@@ -25,15 +25,15 @@ class DataService {
     return http.put(`iberia/vuelos/${IdVuelo}`, data);
   }
 
-  findByOrigenAirEuropa(origen) {
+  filterByOrigenAirEuropa(origen) {
     return http.get(`aireuropa/vuelos/fecha/:${origen}`);
   }
 
-  findByDestinoAirEuropa(destino) {
+  filterByDestinoAirEuropa(destino) {
     return http.get(`aireuropa/vuelos/fecha/origen/:${destino}`);
   }
 
-  findByDestinoIberia(destino) {
+  filterByDestinoIberia(destino) {
     return http.get(`iberia/vuelos/fecha/origen/:${destino}`);
   }
 

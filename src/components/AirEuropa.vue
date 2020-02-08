@@ -29,6 +29,7 @@
           <b-form-select-option
             v-for="(vuelo, index) in vuelos"
             :key="index"
+            :value="vuelo.origen"
             @change="getOrigenItem(currentIndex)"
           >{{vuelo.origen}}</b-form-select-option>
         </b-form-select>
@@ -48,16 +49,25 @@
         </b-form-select>
       </div>
 
-      TODO: Implemented Vera search to Origen and Destino -->
+      TODO: Implemented Vera search to Origen and Destino-->
 
       <b-card-group columns v-if="vuelos">
-        <b-card v-for="(vuelo, index) in vuelos" :key="index" tag="article" class="card"  :elevation="10">
+        <b-card
+          v-for="(vuelo, index) in vuelos"
+          :key="index"
+          tag="article"
+          class="card"
+          :elevation="10"
+        >
           <b-card-img v-bind:src="vuelo.image" v-bind:alt="vuelo.idVuelo" class="card_image"></b-card-img>
           <b-card-title class="card_title">{{vuelo.origen + " - " +vuelo.destino}}</b-card-title>
           <b-list-group horizontal>
             <b-list-group-item>{{"Fecha: "+formatDate(vuelo.fecha)}}</b-list-group-item>
             <b-list-group-item>{{"Salida: "+vuelo.hora}}</b-list-group-item>
-            <b-list-group-item>{{"Plazas: "+vuelo.disponibles+"/"+vuelo.totales}}</b-list-group-item>
+            <b-list-group-item>
+              Plazas:
+              <strong id="plazas">{{vuelo.disponibles+"/"+vuelo.totales}}</strong>
+            </b-list-group-item>
           </b-list-group>
           <b-card-text class="card_precio">{{vuelo.precio +" €"}}</b-card-text>
 
@@ -132,15 +142,27 @@
         </template>
 
         <template v-slot:modal-footer>
-          <!-- Emulate built in modal footer ok and cancel button actions -->
-          <b-button size="sm" variant="success" @click="bookingVuelo">Reservar vuelo</b-button>
+          <!-- Emulate built in modal footer ok button actions -->
+          <b-button
+            v-b-modal.modal-succesful
+            size="sm"
+            variant="success"
+            @click="bookingVuelo(currentVuelo.idVuelo) "
+          >Reservar vuelo</b-button>
         </template>
       </b-modal>
+      <b-modal id="modal-successful" size="sm" title="Third Modal" ok-only>
+        <p class="my-1">Pago Realizado correctamente</p>
+      </b-modal>
     </div>
-      <v-footer dark>
-    <v-spacer></v-spacer>
-    <div>&copy; JG{{ new Date().getFullYear() }}</div>
-  </v-footer>
+    <!-- Footer -->
+    <footer class="page-footer font-small blue">
+      <div class="footer-copyright text-center py-3">
+        © 2020 Copyright:
+        <a href="./">ComparadorVuelos</a>
+      </div>
+      <!-- Footer -->
+    </footer>
   </div>
 </template>
 
@@ -161,45 +183,43 @@ export default {
     };
   },
   methods: {
+    //Get all data
     getALL() {
       DataService.getAllAirEuropa().then(response => {
         this.vuelos = response.data;
       });
     },
 
+    //Refresh data
     refreshList() {
       this.getALL();
       this.currentVuelo = null;
       this.currentIndex = -1;
     },
 
+    //Take current vuelo
     setActiveVuelo(vuelo, index) {
       this.currentVuelo = vuelo;
       this.currentIndex = index;
     },
 
-    searchDestino() {
-      DataService.findByDestinoAirEuropa(this.destino).then(response => {
-        this.vuelos = response.data;
-      });
-    },
-
+    //Filter by origen
     getOrigenItem(origenSelected) {
-      DataService.findByOrigenAirEuropa(origenSelected).then(response => {
+      DataService.filterByOrigenAirEuropa(origenSelected).then(response => {
         this.vuelos = response.data;
       });
     },
 
-    getDestinoItem(origenSelected) {
-      DataService.findByDestinoAirEuropa(origenSelected).then(response => {
+    //Filter by destino
+    getDestinoItem(destinoSelected) {
+      DataService.filterByDestinoAirEuropa(destinoSelected).then(response => {
         this.vuelos = response.data;
       });
     },
 
-    //Ppdate to flight booking
-    bookingVuelo() {
-      DataService.updateAirEuropa();
-      this.refreshList();
+    //Update to flight booking
+    bookingVuelo(idVuelo) {
+      DataService.updateAirEuropa(idVuelo);
     },
 
     //Format date
@@ -220,7 +240,6 @@ export default {
 }
 .img_logo {
   width: 49em;
-  margin: auto;
   text-align: center;
 }
 .card {
@@ -233,7 +252,9 @@ export default {
   height: 3em;
   font-size: 1.5em;
 }
-
+#plazas {
+  font-size: 1.45em;
+}
 .card_image {
   width: 20em;
   height: 11em;
