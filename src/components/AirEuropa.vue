@@ -62,7 +62,7 @@
           <b-card-img v-bind:src="vuelo.image" v-bind:alt="vuelo.idVuelo" class="card_image"></b-card-img>
           <b-card-title class="card_title">{{vuelo.origen + " - " +vuelo.destino}}</b-card-title>
           <b-list-group horizontal>
-            <b-list-group-item>{{"Fecha: "+formatDate(vuelo.fecha)}}</b-list-group-item>
+            <b-list-group-item>{{"Fecha: "+formatDate(vuelo.fecha,"ll")}}</b-list-group-item>
             <b-list-group-item>{{"Salida: "+vuelo.hora}}</b-list-group-item>
             <b-list-group-item>
               Plazas:
@@ -86,6 +86,7 @@
         v-if="currentVuelo"
         id="modal-center"
         centered
+        no-stacking
         :title="currentVuelo.Origen +' - '+currentVuelo.Destino"
       >
         <template v-slot:modal-header="{ close }">
@@ -124,7 +125,7 @@
               <label>
                 <strong>Fecha:</strong>
               </label>
-              {{ currentVuelo.fecha }}
+              {{ formatDate(currentVuelo.fecha,"LL") }}
             </div>
             <div>
               <label>
@@ -144,15 +145,16 @@
         <template v-slot:modal-footer>
           <!-- Emulate built in modal footer ok button actions -->
           <b-button
-            v-b-modal.modal-succesful
             size="sm"
             variant="success"
-            @click="bookingVuelo(currentVuelo.idVuelo) "
+            @click="bookingVuelo(currentVuelo.idVuelo,currentVuelo)"
+            v-b-modal="'modal-successful'"
           >Reservar vuelo</b-button>
         </template>
       </b-modal>
-      <b-modal id="modal-successful" size="sm" title="Third Modal" ok-only>
-        <p class="my-1">Pago Realizado correctamente</p>
+      <b-modal id="modal-successful" centered size="sm" title="¡Enhorabuena!" ok-only>
+        <p class="text text-center"> Ha contratado un vuelo con</p>
+        <img src="../assets/air-europa.png" class="img_logo_modal"/>
       </b-modal>
     </div>
     <!-- Footer -->
@@ -220,11 +222,12 @@ export default {
     //Update to flight booking
     bookingVuelo(idVuelo) {
       DataService.updateAirEuropa(idVuelo);
+      this.close()
     },
 
     //Format date
-    formatDate(date) {
-      return moment(date).format("ll");
+    formatDate(date,type) {
+      return moment(date).format(type);
     }
   },
   mounted() {
@@ -263,15 +266,9 @@ export default {
   font-size: 2.5em;
   text-align: right;
 }
-#vuelo {
-  background-color: white;
-  border-radius: 3em;
-}
-#notvuelo {
-  color: white;
-}
-#card {
-  background-color: rgb(52, 58, 64);
-  border-radius: 3em;
+.img_logo_modal{
+  width: 16.5em;
+  height: 5em;
+  text-align: center;
 }
 </style>
