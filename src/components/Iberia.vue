@@ -4,14 +4,41 @@
       <div class="col-12 col-md-12 mb-4">
         <img class="img_logo" src="../assets/iberia.png" />
       </div>
-
-      <div class="search-wrapper mb-2 col-12">
+      <!-- Search by origen -->
+      <div class="search-wrapper mb-2 col-4">
         <input
-          class="form-control"
+          class="form-control shadow appearance-none border rounded text text-center"
           type="text"
           v-model="searchQuery"
           placeholder="Buscar vuelos por origen"
         />
+      </div>
+      <!-- Search by destino -->
+      <div class="search-wrapper mb-2 col-4">
+        <input
+          class="form-control shadow appearance-none border rounded text text-center"
+          type="text"
+          v-model="searchQueryDestino"
+          placeholder="Buscar vuelos por destino"
+        />
+      </div>
+      <div class="search-wrapper mb-2 col-4">
+        <v-date-picker
+          :input-props='{
+            
+            class: " shadow appearance-none border rounded py-2 px-3 text text-center",
+            placeholder: "Buscar vuelos por fecha",
+            readonly: true
+            }'
+          v-model="searchQueryFecha"
+          color="red"
+        />
+        <!--Clear Button-->
+        <button
+          type="button"
+          class="btn btn-danger text-white font-bold py-2 px-4 rounded-r"
+          @click="dates = null"
+        >Clear</button>
       </div>
 
       <b-card-group columns>
@@ -150,7 +177,9 @@ export default {
       vuelos: [],
       currentVuelo: null,
       currentIndex: -1,
-      searchQuery: ""
+      searchQuery: "",
+      searchQueryDestino: "",
+      searchQueryFecha: null
     };
   },
   methods: {
@@ -202,14 +231,38 @@ export default {
     this.getALL();
   },
   computed: {
+    //Filter flights by 'origen'
     FilteredVuelos() {
       var self = this;
-      if (this.searchQuery == "") {
-        return this.vuelos;
+      if (this.searchQuery != "") {
+        return this.vuelos.filter(function(vuelo) {
+          return (
+            vuelo.origen
+              .toLowerCase()
+              .indexOf(self.searchQuery.toLowerCase()) >= 0
+          );
+        });
       }
-      return this.vuelos.filter(function(vuelo) {
-        return vuelo.origen.toLowerCase().indexOf(self.searchQuery) >= 0;
-      });
+      if (this.searchQueryDestino != "") {
+        return this.vuelos.filter(function(vuelo) {
+          return (
+            vuelo.destino
+              .toLowerCase()
+              .indexOf(self.searchQueryDestino.toLowerCase()) >= 0
+          );
+        });
+      }
+      if (this.searchQueryFecha != null) {
+        return this.vuelos.filter(function(vuelo) {
+          return (
+            self
+              .formatDate(vuelo.fecha, "l")
+              .toLowerCase()
+              .indexOf(self.searchQueryFecha.toLowerCase()) >= 0
+          );
+        });
+      }
+      return this.vuelos;
     }
   }
 };

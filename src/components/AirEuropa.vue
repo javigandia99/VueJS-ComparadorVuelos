@@ -35,7 +35,7 @@
         </b-form-select>
       </div>
 
-      Destino Selector to search -->
+      Destino Selector to search-->
       <!--TODO: Search with both of them not implemented 
 
       <div class="col-6">
@@ -51,14 +51,40 @@
 
       TODO: Implemented Vera search to Origen and Destino-->
 
-      <!-- Search by Origen -->
-      <div class="search-wrapper mb-2 col-12">
+      <!-- Search by origen -->
+      <div class="search-wrapper mb-2 col-4">
         <input
-          class="form-control"
+          class="form-control shadow appearance-none border rounded text text-center"
           type="text"
-          v-model="searchQuery"
+          v-model="searchQueryOrigen"
           placeholder="Buscar vuelos por origen"
         />
+      </div>
+      <!-- Search by destino -->
+      <div class="search-wrapper mb-2 col-4">
+        <input
+          class="form-control shadow appearance-none border rounded text text-center"
+          type="text"
+          v-model="searchQueryDestino"
+          placeholder="Buscar vuelos por destino"
+        />
+      </div>
+      <div class="search-wrapper mb-2 col-4">
+        <v-date-picker
+          :input-props='{
+            class: " shadow appearance-none border rounded py-2 px-3 text text-center",
+            placeholder: "Buscar vuelos por fecha",
+            readonly: true
+            }'
+          v-model="searchQueryFecha"
+          color="red"
+        />
+        <!--Clear Button-->
+        <button
+          type="button"
+          class="btn btn-primary text-white py-2 px-4 rounded-r"
+          @click="dates = null"
+        >Borrar</button>
       </div>
 
       <b-card-group columns v-if="vuelos">
@@ -189,7 +215,9 @@ export default {
       vuelos: [],
       currentVuelo: null,
       currentIndex: -1,
-      searchQuery: '',
+      searchQueryOrigen: "",
+      searchQueryDestino: "",
+      searchQueryFecha: null,
 
       selected: null
     };
@@ -246,12 +274,35 @@ export default {
   computed: {
     FilteredVuelos() {
       var self = this;
-      if (this.searchQuery == "") {
-        return this.vuelos;
+      if (this.searchQueryOrigen != "") {
+        return this.vuelos.filter(function(vuelo) {
+          return (
+            vuelo.origen
+              .toLowerCase()
+              .indexOf(self.searchQueryOrigen.toLowerCase()) >= 0
+          );
+        });
       }
-      return this.vuelos.filter(function(vuelo) {
-        return vuelo.origen.toLowerCase().indexOf(self.searchQuery) >= 0;
-      });
+      if (this.searchQueryDestino != "") {
+        return this.vuelos.filter(function(vuelo) {
+          return (
+            vuelo.destino
+              .toLowerCase()
+              .indexOf(self.searchQueryDestino.toLowerCase()) >= 0
+          );
+        });
+      }
+      if (this.searchQueryFecha != null) {
+        return this.vuelos.filter(function(vuelo) {
+          return (
+            self
+              .formatDate(vuelo.fecha, "l")
+              .toLowerCase()
+              .indexOf(self.searchQueryFecha.toLowerCase()) >= 0
+          );
+        });
+      }
+      return this.vuelos;
     }
   }
 };
