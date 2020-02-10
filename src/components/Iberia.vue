@@ -1,8 +1,17 @@
 <template>
   <div class="container mt-4">
     <div class="list row">
+      <!-- Logo-->
       <div class="col-12 col-md-12 mb-4">
         <img class="img_logo" src="../assets/iberia.png" />
+      </div>
+      <!--Selector to sort by price & available places -->
+      <div class="search-wrapper mb-2 col-4">
+        <b-form-select v-model="selected" class="mb-3">
+          <b-form-select-option :value="null" disabled>¿Ordenar por precio?</b-form-select-option>:value="null" disabled
+          <b-form-select-option @click="sortByPrice()" value="precio">Precio</b-form-select-option>
+          <b-form-select-option @click="sortByDisponibles()" value="precio">Plazas Disponibles</b-form-select-option>
+        </b-form-select>
       </div>
       <!-- Search by origen -->
       <div class="search-wrapper mb-2 col-4">
@@ -22,11 +31,12 @@
           placeholder="Buscar vuelos por destino"
         />
       </div>
+      <!-- Search by date with datepicker (v-calendar) -->
       <div class="search-wrapper mb-2 col-4">
         <v-date-picker
           :input-props='{
             
-            class: " shadow appearance-none border rounded py-2 px-3 text text-center",
+            class: "shadow appearance-none border rounded py-2 px-3 text text-center",
             placeholder: "Buscar vuelos por fecha",
             readonly: true
             }'
@@ -40,7 +50,7 @@
           @click="dates = null"
         >Clear</button>
       </div>
-
+      <!-- Cards with data -->
       <b-card-group columns>
         <b-card
           v-for="(vuelo, index) in FilteredVuelos"
@@ -89,6 +99,12 @@
         </template>
         <template v-slot:default>
           <div class="p-4" id="vuelo">
+            <div>
+              <label>
+                <strong>Compañia:</strong>
+              </label>
+              {{ currentVuelo.compania }}
+            </div>
             <div>
               <label>
                 <strong>idVuelo:</strong>
@@ -185,46 +201,38 @@ export default {
   methods: {
     //Get all data
     getALL() {
-      DataService.getAllIberia().then(response => {
+      DataService.getData('iberia').then(response => {
         this.vuelos = response.data;
       });
     },
-
     //Refresh data
     refreshList() {
       this.getALL();
       this.currentVuelo = null;
       this.currentIndex = -1;
     },
-
     //Take current vuelo
     setActiveVuelo(vuelo, index) {
       this.currentVuelo = vuelo;
       this.currentIndex = index;
     },
-
-    //Filter by origen
-    getOrigenItem(origenSelected) {
-      DataService.filterByOrigenIberia(origenSelected).then(response => {
-        this.vuelos = response.data;
-      });
-    },
-
-    //Filter by destino
-    getDestinoItem(destinoSelected) {
-      DataService.filterByDestinoIberia(destinoSelected).then(response => {
-        this.vuelos = response.data;
-      });
-    },
-
     //Update to flight booking
     bookingVuelo(idVuelo) {
-      DataService.updateIberia(idVuelo);
+      DataService.takeToken().then(response => {
+        DataService.updateIberia(idVuelo, response.data.token);
+      });
     },
-
     //Format date
     formatDate(date) {
       return moment(date).format("ll");
+    },
+    //sort data by price
+    sortByPrice() {
+      return this.vuelos.sort((a, b) => a.precio - b.precio);
+    },
+    //sort data by available places
+    sortByDisponibles() {
+      return this.vuelos.sort((a, b) => b.disponibles - a.disponibles);
     }
   },
   mounted() {
@@ -289,7 +297,6 @@ export default {
   height: 3em;
   font-size: 1.5em;
 }
-
 .card_image {
   width: 20em;
   height: 11em;

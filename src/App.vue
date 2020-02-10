@@ -9,6 +9,9 @@
         <li class="nav-item">
           <a href="/iberia" class="nav-link">Iberia</a>
         </li>
+        <li class="nav-item">
+          <a href="/comparador" class="nav-link">Comparador</a>
+        </li>
       </div>
     </nav>
     <router-view />

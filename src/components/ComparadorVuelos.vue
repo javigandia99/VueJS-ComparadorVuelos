@@ -1,14 +1,14 @@
 <template>
   <div class="container mt-4">
     <div class="list row">
+      <!-- Logo -->
       <div class="col-12 col-md-12 mb-4">
-        <img class="img_logo" src="../assets/air-europa.png" />
+        <img class="img_logo" src="../assets/comparadorvuelos.png" />
       </div>
-
       <!--Selector to sort by price & available places -->
       <div class="search-wrapper mb-2 col-4">
-        <b-form-select v-model="selected" class="mb-3 shadow appearance-none border rounded text text-center">
-          <b-form-select-option :value="null" disabled>¿Ordenar por precio?</b-form-select-option>
+        <b-form-select v-model="selected" class="mb-3">
+          <b-form-select-option :value="null" disabled>¿Ordenar por precio?</b-form-select-option>:value="null" disabled
           <b-form-select-option @click="sortByPrice()" value="precio">Precio</b-form-select-option>
           <b-form-select-option @click="sortByDisponibles()" value="precio">Plazas Disponibles</b-form-select-option>
         </b-form-select>
@@ -31,25 +31,8 @@
           placeholder="Buscar vuelos por destino"
         />
       </div>
-      <div class="search-wrapper mb-2 col-4">
-        <v-date-picker
-          :input-props='{
-            class: " shadow appearance-none border rounded py-2 px-3 text text-center",
-            placeholder: "Buscar vuelos por fecha",
-            readonly: true
-            }'
-          v-model="searchQueryFecha"
-          color="red"
-        />
-        <!--Clear Button-->
-        <button
-          type="button"
-          class="btn btn-primary text-white py-2 px-4 rounded-r"
-          @click="dates = null"
-        >Borrar</button>
-      </div>
-
-      <b-card-group columns v-if="vuelos">
+      <!-- Cards with data -->
+      <b-card-group columns>
         <b-card
           v-for="(vuelo, index) in FilteredVuelos"
           :key="index"
@@ -59,19 +42,27 @@
         >
           <b-card-img v-bind:src="vuelo.image" v-bind:alt="vuelo.idVuelo" class="card_image"></b-card-img>
           <b-card-title class="card_title">{{vuelo.origen + " - " +vuelo.destino}}</b-card-title>
-          <b-list-group horizontal>
-            <b-list-group-item>{{"Fecha: "+formatDate(vuelo.fecha,"ll")}}</b-list-group-item>
+          <!-- List detail of flight -->
+          <b-list-group horizontal class="mb-1">
+            <b-list-group-item>{{"Fecha: "+formatDate(vuelo.fecha)}}</b-list-group-item>
             <b-list-group-item>{{"Salida: "+vuelo.hora}}</b-list-group-item>
             <b-list-group-item>
               Plazas:
               <strong id="plazas">{{vuelo.disponibles+"/"+vuelo.totales}}</strong>
             </b-list-group-item>
           </b-list-group>
+          <!-- Image logo -->
+          <b-card-text v-if="vuelo.compania==='Iberia'">
+            <img class="card_logo" src="../assets/iberia.png" />
+          </b-card-text>
+          <b-card-text v-else>
+            <img class="card_logo" src="../assets/air-europa.png" />
+          </b-card-text>
           <b-card-text class="card_precio">{{vuelo.precio +" €"}}</b-card-text>
-
+          <!-- Card button -->
           <b-button
             block
-            variant="primary"
+            variant="info"
             v-b-modal.modal-center
             v-if="vuelo.disponibles > 0"
             :class="{ active: index == currentIndex }"
@@ -80,7 +71,6 @@
           <b-button v-else block disabled variant="secondary">PLAZAS AGOTADAS</b-button>
         </b-card>
       </b-card-group>
-
       <!-- Detail Vuelos when selected one  -->
       <b-modal
         v-if="currentVuelo"
@@ -88,11 +78,15 @@
         class="modal-backdrop"
         centered
         no-stacking
-        :title="currentVuelo.origen +' - '+currentVuelo.destino"
+        :title="currentVuelo.Origen +' - '+currentVuelo.Destino"
       >
+        <!-- Modal Header -->
         <template v-slot:modal-header>
+          <!-- Emulate built in modal header close button action -->
+
           <h3>{{currentVuelo.origen +' - '+currentVuelo.destino}}</h3>
         </template>
+        <!-- Modal Content -->
         <template v-slot:default>
           <div class="p-4" id="vuelo">
             <div>
@@ -145,25 +139,30 @@
             </div>
           </div>
         </template>
-        <template v-slot:modal-footer="{ close }">
+        <!-- Modal Footer -->
+        <template v-slot:modal-footer="{close}">
+          <!-- Emulate built in modal footer ok button actions -->
           <b-button size="sm" variant="outline-danger" @click="close()">Cancelar Reserva</b-button>
           <b-button
             size="sm"
             variant="success"
-            @click="bookingVuelo(currentVuelo.idVuelo,currentVuelo)"
+            @click="bookingVuelo(currentVuelo.idVuelo,currentVuelo.compania)"
             v-b-modal="'modal-successful'"
           >Reservar vuelo</b-button>
         </template>
       </b-modal>
-
-      <b-modal id="modal-successful" centered size="sm" title="¡Enhorabuena!" ok-only>
+      <!-- Modal when successful booking flight -->
+      <b-modal id="modal-successful" centered size="sm" title="¡Enhorabuena!">
         <p class="text text-center">Ha contratado un vuelo con</p>
-        <img src="../assets/air-europa.png" class="img_logo_modal" />
+        <img src="../assets/iberia.png" class="img_logo_modal" />
+        <template v-slot:modal-footer="{ok}">
+          <b-button size="sm" variant="outline-success" @click="ok()">Ok</b-button>
+        </template>
       </b-modal>
     </div>
     <!-- Footer -->
-    <footer class="footer page-footer font-small mt-1">
-      <div class="footer footer-copyright text-center py-3">
+    <footer class="page-footer font-small blue">
+      <div class="footer-copyright text-center py-3">
         © 2020 Copyright:
         <a href="./">ComparadorVuelos</a>
       </div>
@@ -177,7 +176,7 @@ import DataService from "../services/DataService";
 import moment from "moment";
 
 export default {
-  name: "AirEuropa",
+  name: "Comparador",
   data() {
     return {
       vuelos: [],
@@ -185,58 +184,63 @@ export default {
       currentIndex: -1,
       searchQueryOrigen: "",
       searchQueryDestino: "",
-      searchQueryFecha: null,
-      selected: null
+      searchQueryFecha: null
     };
   },
   methods: {
-    //Get all data
+    //Get all data of iberia & aireuropa
     getALL() {
-      DataService.getData('aireuropa').then(response => {
+      DataService.getData("iberia").then(response => {
         this.vuelos = response.data;
+        DataService.getData("aireuropa").then(response => {
+          let vuelosAll = this.vuelos.concat(response.data);
+          this.vuelos = vuelosAll;
+        });
       });
     },
-
     //Refresh data
     refreshList() {
       this.getALL();
       this.currentVuelo = null;
       this.currentIndex = -1;
     },
-
     //Take current vuelo
     setActiveVuelo(vuelo, index) {
       this.currentVuelo = vuelo;
       this.currentIndex = index;
     },
-
     //Update to flight booking
-    bookingVuelo(idVuelo) {
-      DataService.takeToken().then(response => {
-        alert(response.data.token);
-        DataService.update('aireuropa',idVuelo, response.data.token);
-      });
+    bookingVuelo(idVuelo, type) {
+      if (type === "Iberia") {
+        DataService.takeToken().then(response => {
+          alert(response.data.token);
+          DataService.updateIberia(idVuelo, response.data.token);
+        });
+      } else {
+        DataService.takeToken().then(response => {
+          alert(response.data.token);
+          DataService.updateAirEuropa(idVuelo, response.data.token);
+        });
+      }
     },
-
+    //Format date
+    formatDate(date) {
+      return moment(date).format("ll");
+    },
     //sort data by price
     sortByPrice() {
       return this.vuelos.sort((a, b) => a.precio - b.precio);
     },
-
     //sort data by available places
     sortByDisponibles() {
       return this.vuelos.sort((a, b) => b.disponibles - a.disponibles);
-    },
-
-    //Format date
-    formatDate(date, type) {
-      return moment(date).format(type);
     }
   },
   mounted() {
     this.getALL();
   },
   computed: {
+    //Filter flights by 'origen'
     FilteredVuelos() {
       var self = this;
       if (this.searchQueryOrigen != "") {
@@ -257,21 +261,12 @@ export default {
           );
         });
       }
-      if (this.searchQueryFecha != null) {
-        return this.vuelos.filter(function(vuelo) {
-          return (
-            self
-              .formatDate(vuelo.fecha, "l")
-              .toLowerCase()
-              .indexOf(self.searchQueryFecha.toLowerCase()) >= 0
-          );
-        });
-      }
       return this.vuelos;
     }
   }
 };
 </script>
+
 <style>
 .list {
   text-align: center;
@@ -279,7 +274,7 @@ export default {
   background-color: white;
 }
 .img_logo {
-  width: 49em;
+  width: 30em;
   text-align: center;
 }
 .card {
@@ -292,12 +287,13 @@ export default {
   height: 3em;
   font-size: 1.5em;
 }
-#plazas {
-  font-size: 1.45em;
-}
 .card_image {
   width: 20em;
   height: 11em;
+}
+.card_logo {
+  width: 10em;
+  height: 4em;
 }
 .card_precio {
   font-size: 2.5em;
@@ -305,7 +301,7 @@ export default {
 }
 .img_logo_modal {
   width: 16.5em;
-  height: 5em;
+  height: 6em;
   text-align: center;
 }
 .modal-backdrop {

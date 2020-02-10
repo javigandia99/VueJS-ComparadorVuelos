@@ -1,40 +1,21 @@
 import http from "../http-common";
 
 class DataService {
-  getAllAirEuropa() {
-    return http.get("aireuropa/vuelos/fecha/origen/");
+  getData(compania) {
+    return http.get(`${compania}/vuelos/fecha/origen/`);
   }
 
-  getAllIberia() {
-    return http.get("iberia/vuelos/fecha/origen/");
+  update(compania, idVuelo, token) {
+    return http.put(`${compania}/vuelos/${idVuelo}`, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'access-token': token
+      }
+    });
   }
 
-  getAirEuropa(destino) {
-    return http.get(`aireuropa/vuelos/fecha/origen/:${destino}`);
-  }
-
-  getIberia(destino) {
-    return http.get(`iberia/vuelos/fecha/origen/:${destino}`);
-  }
-
-  updateAirEuropa(IdVuelo) {
-    return http.put(`aireuropa/vuelos/${IdVuelo}`);
-  }
-
-  updateIberia(IdVuelo, data) {
-    return http.put(`iberia/vuelos/${IdVuelo}`, data);
-  }
-
-  filterByOrigenAirEuropa(origen) {
-    return http.get(`aireuropa/vuelos/fecha/:${origen}`);
-  }
-
-  filterByDestinoAirEuropa(destino) {
-    return http.get(`aireuropa/vuelos/fecha/origen/:${destino}`);
-  }
-
-  filterByDestinoIberia(destino) {
-    return http.get(`iberia/vuelos/fecha/origen/:${destino}`);
+  takeToken() {
+    return http.post('auth/');
   }
 
 }

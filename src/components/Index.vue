@@ -1,6 +1,6 @@
 
 <template>
-    <img class="index_img" src="https://images.unsplash.com/photo-1468530986413-2c93495ed020?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1949&q=80">
+    <img class="index_img" src="https://www.larepublica.net/storage/images/2018/04/23/201804231724050.fb.jpg">
 </template>
     <script>
 export default {
@@ -9,7 +9,7 @@ export default {
 </script>
 <style>
 .index_img{
-  height: 54.5em;
-  width: 116.3em;
+  height: 56.1em;
+  width: 120em;
 }
 </style>

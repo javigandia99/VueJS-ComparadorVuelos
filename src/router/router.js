@@ -34,6 +34,16 @@ export default new Router({
       meta: {
         title: 'Comparador de Vuelos - Iberia',
       },
+    },
+    //Comparador
+    {
+      path: "/vuelos/fecha/origen/",
+      alias: "/comparador",
+      name: "Comparador",
+      component: () => import("../components/ComparadorVuelos"),
+      meta: {
+        title: 'Comparador de Vuelos - Comparando',
+      }
     }
   ]
 });
