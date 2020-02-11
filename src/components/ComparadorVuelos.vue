@@ -156,8 +156,8 @@
       </b-modal>
       <!-- Modal when successful booking flight -->
       <b-modal id="modal-successful" centered size="sm" title="¡Enhorabuena!">
-        <p class="text text-center">Ha contratado un vuelo con</p>
-        <img src="../assets/iberia.png" class="img_logo_modal" />
+        <p class="text text-center">Ha contratado un vuelo en</p>
+        <img src="../assets/comparadorvuelos.png" class="img_logo_modal" />
         <template v-slot:modal-footer="{ok}">
           <b-button size="sm" variant="outline-success" @click="ok()">Ok</b-button>
         </template>
@@ -199,6 +199,7 @@ export default {
         DataService.getData("aireuropa").then(response => {
           let vuelosAll = this.vuelos.concat(response.data);
           this.vuelos = vuelosAll;
+          return this.vuelos;
         });
       });
     },
@@ -215,15 +216,14 @@ export default {
     },
     //Update to flight booking
     bookingVuelo(idVuelo, type) {
-      if (type === "Iberia") {
-        DataService.takeToken().then(response => {
+      if (type === "Iberia")
+        return DataService.takeToken().then(response => {
           DataService.update("iberia", idVuelo, response.data.token);
         });
-      } else {
-        DataService.takeToken().then(response => {
+      if (type === "AirEuropa")
+        return DataService.takeToken().then(response => {
           DataService.update("aireuropa", idVuelo, response.data.token);
         });
-      }
     },
     //Format date
     formatDate(date) {
@@ -236,6 +236,17 @@ export default {
     //sort data by available places
     sortByDisponibles() {
       return this.vuelos.sort((a, b) => b.disponibles - a.disponibles);
+    },
+    //sort by random
+    shuffle(vuelos) {
+      var i, random, temp;
+      for (i = vuelos.length - 1; i > 0; i--) {
+        random = Math.floor(Math.random() * (i + 1));
+        temp = vuelos[i];
+        vuelos[i] = vuelos[random];
+        vuelos[random] = temp;
+      }
+      return vuelos;
     }
   },
   mounted() {
@@ -263,7 +274,17 @@ export default {
           );
         });
       }
-      return this.vuelos;
+      if (this.searchQueryFecha != null) {
+        return this.vuelos.filter(function(vuelo) {
+          return (
+            self
+              .formatDate(vuelo.fecha, "l")
+              .toLowerCase()
+              .indexOf(self.searchQueryFecha.toLowerCase()) >= 0
+          );
+        });
+      }
+      return this.shuffle(this.vuelos);
     }
   }
 };
