@@ -6,7 +6,7 @@ class DataService {
   }
 
   update(compania, idVuelo, token) {
-    return http.put(`${compania}/vuelos/${idVuelo}`, {
+    return http.put(`${compania}/vuelos/${idVuelo}`, {}, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'access-token': token

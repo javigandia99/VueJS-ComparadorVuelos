@@ -4,13 +4,15 @@
       <div class="col-12 col-md-12 mb-4">
         <img class="img_logo" src="../assets/air-europa.png" />
       </div>
-
       <!--Selector to sort by price & available places -->
       <div class="search-wrapper mb-2 col-4">
-        <b-form-select v-model="selected" class="mb-3 shadow appearance-none border rounded text text-center">
+        <b-form-select
+          v-model="selected"
+          class="mb-3 shadow appearance-none border rounded text text-center"
+        >
           <b-form-select-option :value="null" disabled>¿Ordenar por precio?</b-form-select-option>
           <b-form-select-option @click="sortByPrice()" value="precio">Precio</b-form-select-option>
-          <b-form-select-option @click="sortByDisponibles()" value="precio">Plazas Disponibles</b-form-select-option>
+          <b-form-select-option @click="sortByDisponibles()" value="disponibles">Plazas Disponibles</b-form-select-option>
         </b-form-select>
       </div>
       <!-- Search by origen -->
@@ -192,7 +194,7 @@ export default {
   methods: {
     //Get all data
     getALL() {
-      DataService.getData('aireuropa').then(response => {
+      DataService.getData("aireuropa").then(response => {
         this.vuelos = response.data;
       });
     },
@@ -213,8 +215,8 @@ export default {
     //Update to flight booking
     bookingVuelo(idVuelo) {
       DataService.takeToken().then(response => {
-        alert(response.data.token);
-        DataService.update('aireuropa',idVuelo, response.data.token);
+        const myToken = response.data.token;
+        DataService.update("aireuropa", idVuelo, myToken);
       });
     },
 

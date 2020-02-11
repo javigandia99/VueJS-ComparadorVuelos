@@ -7,10 +7,13 @@
       </div>
       <!--Selector to sort by price & available places -->
       <div class="search-wrapper mb-2 col-4">
-        <b-form-select v-model="selected" class="mb-3">
-          <b-form-select-option :value="null" disabled>¿Ordenar por precio?</b-form-select-option>:value="null" disabled
+        <b-form-select
+          v-model="selected"
+          class="mb-3 shadow appearance-none border rounded text text-center"
+        >
+          <b-form-select-option :value="null" disabled>¿Ordenar por precio?</b-form-select-option>
           <b-form-select-option @click="sortByPrice()" value="precio">Precio</b-form-select-option>
-          <b-form-select-option @click="sortByDisponibles()" value="precio">Plazas Disponibles</b-form-select-option>
+          <b-form-select-option @click="sortByDisponibles()" value="disponibles">Plazas Disponibles</b-form-select-option>
         </b-form-select>
       </div>
       <!-- Search by origen -->
@@ -195,13 +198,14 @@ export default {
       currentIndex: -1,
       searchQuery: "",
       searchQueryDestino: "",
-      searchQueryFecha: null
+      searchQueryFecha: null,
+      selected: null
     };
   },
   methods: {
     //Get all data
     getALL() {
-      DataService.getData('iberia').then(response => {
+      DataService.getData("iberia").then(response => {
         this.vuelos = response.data;
       });
     },
@@ -219,7 +223,8 @@ export default {
     //Update to flight booking
     bookingVuelo(idVuelo) {
       DataService.takeToken().then(response => {
-        DataService.updateIberia(idVuelo, response.data.token);
+        const myToken = response.data.token;
+        DataService.update("iberia", idVuelo, myToken);
       });
     },
     //Format date

@@ -7,10 +7,13 @@
       </div>
       <!--Selector to sort by price & available places -->
       <div class="search-wrapper mb-2 col-4">
-        <b-form-select v-model="selected" class="mb-3">
-          <b-form-select-option :value="null" disabled>¿Ordenar por precio?</b-form-select-option>:value="null" disabled
+        <b-form-select
+          v-model="selected"
+          class="mb-3 shadow appearance-none border rounded text text-center"
+        >
+          <b-form-select-option :value="null" disabled>¿Ordenar por precio?</b-form-select-option>
           <b-form-select-option @click="sortByPrice()" value="precio">Precio</b-form-select-option>
-          <b-form-select-option @click="sortByDisponibles()" value="precio">Plazas Disponibles</b-form-select-option>
+          <b-form-select-option @click="sortByDisponibles()" value="disponibles">Plazas Disponibles</b-form-select-option>
         </b-form-select>
       </div>
       <!-- Search by origen -->
@@ -184,7 +187,8 @@ export default {
       currentIndex: -1,
       searchQueryOrigen: "",
       searchQueryDestino: "",
-      searchQueryFecha: null
+      searchQueryFecha: null,
+      selected: null
     };
   },
   methods: {
@@ -213,13 +217,11 @@ export default {
     bookingVuelo(idVuelo, type) {
       if (type === "Iberia") {
         DataService.takeToken().then(response => {
-          alert(response.data.token);
-          DataService.updateIberia(idVuelo, response.data.token);
+          DataService.update("iberia", idVuelo, response.data.token);
         });
       } else {
         DataService.takeToken().then(response => {
-          alert(response.data.token);
-          DataService.updateAirEuropa(idVuelo, response.data.token);
+          DataService.update("aireuropa", idVuelo, response.data.token);
         });
       }
     },
